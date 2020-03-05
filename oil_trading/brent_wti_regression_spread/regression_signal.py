@@ -3,35 +3,6 @@ import pandas as pd
 import numpy as np
 
 
-def equity_performance(df_with_position, X_name, y_name, capital = 100000):
-    df = df_with_position.copy()
-    long_short, X_pos, y_pos = 0, 0, 0
-    position_log = []
-    # Spread trading y_name - X_name
-    for i, data in df.iterrows():
-        # if portfolio is not currently long
-        if long_short != 1:
-            # if signal suggest going long
-            if data.position == 1:
-                long_short = 1
-                y_pos = np.floor(capital / data[y_name])
-                X_pos = -np.floor(capital / data[X_name])
-        # if portfolio is previously long
-        else:
-            # if signal suggest going short
-            if data.position == -1:
-                long_short = -1
-                y_pos = -np.floor(capital / data[y_name])
-                X_pos = np.floor(capital / data[X_name])
-        position_log.append({"timestamp": data.name, "X_pos": X_pos, "y_pos": y_pos})
-
-    df_trade = pd.DataFrame(position_log).set_index("timestamp")
-    df_equity = pd.concat([df, df_trade], axis=1)
-    df_equity["daily_mtm"] = df_equity["X_pos"] * df_equity[X_name] + df_equity["y_pos"] * df_equity[y_name]
-    df_equity["equity"] = df_equity["daily_mtm"].cumsum() + capital
-    return df_equity
-
-
 # Parse df with "signal"
 # Framework for parsing signals
 def rolling_regression_trading_rule(df_with_signal):
