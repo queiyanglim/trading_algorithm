@@ -42,15 +42,17 @@ def equity_performance(df_with_position, X_name, y_name):
 def rolling_regression_trading_rule(df_with_signal):
     df = df_with_signal.copy()
     position = []
+    pos_cache = 0  # cache position info before appending
     for i, data in df.iterrows():
-        if data.spread > data.signal:
-            position.append({"timestamp": data.name, "position": 1})
-        elif data.spread < data.signal:
-            position.append({"timestamp": data.name, "position": -1})
+        if data.spread < data.signal:
+            pos_cache = 1  # Long spread if spread is cheap
+        elif data.spread > data.signal:
+            pos_cache = -1  # short spread if spread is expensive
         else:
-            position.append({"timestamp": data.name, "position": 0})
-    # df_pos = pd.DataFrame()
-    return position
+            pos_cache = 0
+        position.append({"timestamp": data.name, "position": pos_cache})
+    df_pos = pd.DataFrame(position).set_index("timestamp")
+    return pd.concat([df, df_pos], axis=1)
 
 
 # BACK TEST ONLY
