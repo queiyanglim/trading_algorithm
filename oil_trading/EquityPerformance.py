@@ -6,22 +6,25 @@ def equity_performance(df_with_position, X_name, y_name, capital = 100000):
     df = df_with_position.copy()
     long_short, X_pos, y_pos = 0, 0, 0
     position_log = []
+
     # Spread trading y_name - X_name
     for i, data in df.iterrows():
-        # if portfolio is not currently long
-        if long_short != 1:
-            # if signal suggest going long
-            if data.position == 1:
+        # On LONG signal
+        if data.position == 1:
+            if long_short != 1:
                 long_short = 1
-                y_pos = np.floor(capital / data[y_name])
-                X_pos = -np.floor(capital / data[X_name])
-        # if portfolio is previously long
-        else:
-            # if signal suggest going short
-            if data.position == -1:
+                y_pos = np.floor(0.5*capital / data[y_name])
+                X_pos = -np.floor(0.5*capital / data[X_name])
+        # On SHORT signal
+        elif data.position == -1:
+            if long_short != -1:
                 long_short = -1
-                y_pos = -np.floor(capital / data[y_name])
-                X_pos = np.floor(capital / data[X_name])
+                y_pos = -np.floor(0.5*capital / data[y_name])
+                X_pos = np.floor(0.5*capital / data[X_name])
+        else:
+            long_short = 0
+            y_pos = 0
+            X_pos = 0
         position_log.append({"timestamp": data.name, "X_pos": X_pos, "y_pos": y_pos})
 
     df_trade = pd.DataFrame(position_log).set_index("timestamp")

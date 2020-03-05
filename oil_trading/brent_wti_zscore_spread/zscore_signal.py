@@ -6,18 +6,18 @@ def rolling_zscore_trading_rule(df_with_signal):
     position = []
     pos_cache = 0  # cache position info before appending
     threshold = 1.0
+    clear_level = 0.75
     # TODO: MODIFY TRADING RULES HERE
     for i, data in df.iterrows():
         if data.signal < -threshold:
             pos_cache = 1  # Long spread if spread's zscore is less than -threshold
-        elif data.spread > threshold:
+        elif data.signal > threshold:
             pos_cache = -1  # short spread if spread's zscore is more than threshold
-        else:
+        elif abs(data.signal) < clear_level:
             pos_cache = 0
         position.append({"timestamp": data.name, "position": pos_cache})
     df_pos = pd.DataFrame(position).set_index("timestamp")
     return pd.concat([df, df_pos], axis=1)
-
 
 # spread between y - X
 def rolling_zscore_signal(df_input, X_name, y_name, zscore_window):
