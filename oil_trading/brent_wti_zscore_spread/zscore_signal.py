@@ -5,7 +5,7 @@ def rolling_zscore_trading_rule(df_with_signal):
     df = df_with_signal.copy()
     position = []
     pos_cache = 0  # cache position info before appending
-    threshold = 1.0
+    threshold = 1.0 # 1 standard deviation away
     clear_level = 0.75
     # TODO: MODIFY TRADING RULES HERE
     for i, data in df.iterrows():
