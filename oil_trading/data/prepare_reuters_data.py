@@ -32,3 +32,4 @@ def get_reuters_data(frequency):
 def _test_get_reuters_data():
     print(get_reuters_data("daily"))
     print(get_reuters_data("minute"))
+    pass

@@ -1,9 +1,10 @@
 import pandas as pd
 
-
+# FIXME: Not realistic as would like to adjust positions everyday
 def trade_summary(df_input, security_name, position_name):
     """
     For static positions only, i.e. at any time a fixed unit of positions are live.
+    i.e. if on day 0, 100 unit is bought, the unit will be kept at 100 throughout live signal
     Take a dataframe with timestamp index, security, and security_pos (position) and calculate PnL trade by trade.
     """
     df = df_input.copy()
@@ -25,8 +26,9 @@ def trade_summary(df_input, security_name, position_name):
 
     for i, data_slice in enumerate(df.iterrows()):
         s = data_slice[1]  # Slice
-        if i > 1 and s.long_short != df.iloc[i - 1].long_short:
+        if i > 0 and s.long_short != df.iloc[i - 1].long_short:
             if long_short != 0:
+
                 close_price, close_date = s[security_name], s.name
                 update_trade(trade_count, position, open_date, open_price, close_date, close_price)
                 long_short = 0
@@ -59,9 +61,11 @@ def trade_summary(df_input, security_name, position_name):
 
 def _test_static_trade_summary():
     # trade = pd.read_csv(r"C:\Users\queiy\trading_algorithm\pnl_process\trade_sample.csv")
+    trade = pd.read_csv(r"C:\Users\queiy\trading_algorithm\pnl_process\trade_sample_2.csv")
     trade = trade.set_index("timestamp")
     trade = trade.fillna(0)
     trade.index = pd.to_datetime(trade.index, format="%d/%m/%Y")
 
     x, y = trade_summary(trade, "y", "y_pos")
+    print(x,y)
     pass

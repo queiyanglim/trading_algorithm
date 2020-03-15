@@ -1,25 +1,25 @@
 from oil_trading.brent_wti_kalman_spread.kalman_signal.kalman_filter import *
 
 
-def kalman_regression_ZScore_signal(df_input, x_name, y_name):
+def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM_on, EM_n_iter):
     """ Take a df with x and y (indexed with timestamp) and
     return a df with ZScore signal.
-
     *x_name to be called using df[x_name] for its series"""
 
     x, y = df_input[x_name], df_input[y_name]
     df = pd.DataFrame({"y": y, "x": x})
     df.index = pd.to_datetime(df_input.index)
     state_means = kalman_filter_regression(kalman_filter_average(x),
-                                           kalman_filter_average(y))
+                                           kalman_filter_average(y),
+                                           EM_on=EM_on,
+                                           EM_n_iter=EM_n_iter)
 
     # Negative sign to indicate opposite buy/sell direction between x and y
     df["hr"] = - state_means[:, 0]
-    df["hedged_spread"] = df.y + df.x * df.hr
+    df["hedged_spread"] = df.y + df.hr * df.x
 
     # TODO: Z score parameters
-    rolling_window = 20
-    entry_zscore, exit_zscore = 2, 0
+    entry_zscore, exit_zscore = 1.5, 0.5
     mean_spread = df.hedged_spread.rolling(window=rolling_window).mean()
     std_spread = df.hedged_spread.rolling(window=rolling_window).std()
     df["z_score"] = (df.hedged_spread - mean_spread) / std_spread
@@ -49,6 +49,64 @@ def kalman_regression_ZScore_signal(df_input, x_name, y_name):
     # Forward filling
     df["num_units_long"] = df["num_units_long"].fillna(method="pad")
     df["num_units_short"] = df["num_units_short"].fillna(method="pad")
-
+    df["long_short_spread"] = df.num_units_short + df.num_units_long
     return df
 
+
+def kalman_regression_static_unit_allocation(df_with_signal, initial_capital=100000):
+    """" Take df with signals containing:
+        1. num_units_long
+        2. num_units_short
+        3. long_entry
+        4. short_entry
+        and return number of units to long/short based on initial capital
+        as well as trade logs for x and y"""
+    df = df_with_signal.copy()
+    df["long_short_spread"] = df.num_units_long + df.num_units_short
+    # df["enter"] = (df.long_entry & (df.long_short_spread == 1)) | (df.short_entry & (df.long_short_spread == -1))
+    df["enter"] = (df.long_short_spread != df.long_short_spread.shift(1)) & ((df.short_entry) | (df.long_entry))
+    df = df[["y", "x", "hr", "long_short_spread", "enter"]]
+
+    df["x_pos"] = np.nan
+    df["y_pos"] = np.nan
+    df = df.iloc[40:]
+    df.loc[(df.long_short_spread == 0), ["x_pos", "y_pos"]] = 0
+
+    df.loc[df.enter, "y_pos"] = df.long_short_spread * initial_capital / df.y.loc[df.enter]
+    df.loc[df.enter, "x_pos"] = df.y_pos * df.hr
+    df.x_pos = df.x_pos.fillna(method="pad")
+    df.y_pos = df.y_pos.fillna(method="pad")
+    return df
+
+
+def dynamic_unit_allocation(df_with_signal, initial_capital=100000):
+    df = df_with_signal.copy()
+    df["y_pos"] = df.long_short_spread * initial_capital / df.y
+    df["x_pos"] = df.hr * df.y_pos
+    return df
+
+
+def static_unit_allocation(df_with_signal, initial_capital=100000):
+    """" Take df with signals containing:
+        1. num_units_long
+        2. num_units_short
+        3. long_entry
+        4. short_entry
+        and return number of units to long/short based on initial capital
+        as well as trade logs for x and y"""
+    df = df_with_signal.copy()
+    df["long_short_spread"] = df.num_units_long + df.num_units_short
+    # df["enter"] = (df.long_entry & (df.long_short_spread == 1)) | (df.short_entry & (df.long_short_spread == -1))
+    df["enter"] = (df.long_short_spread != df.long_short_spread.shift(1)) & ((df.short_entry) | (df.long_entry))
+    df = df[["y", "x", "hr", "long_short_spread", "enter"]]
+
+    df["x_pos"] = np.nan
+    df["y_pos"] = np.nan
+    df = df.iloc[40:]
+    df.loc[(df.long_short_spread == 0), ["x_pos", "y_pos"]] = 0
+
+    df.loc[df.enter, "y_pos"] = df.long_short_spread * initial_capital / df.y.loc[df.enter]
+    df.loc[df.enter, "x_pos"] = df.y_pos * df.hr
+    df.x_pos = df.x_pos.fillna(method="pad")
+    df.y_pos = df.y_pos.fillna(method="pad")
+    return df
