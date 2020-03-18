@@ -14,9 +14,9 @@ mpl.rcParams['grid.linewidth'] = 0.5
 mpl.rcParams['axes.linewidth'] = 0.01
 plt.style.use("seaborn-whitegrid")
 
-#data = get_reuters_data("daily")
-data = get_bbg_data()
-data = data.tail(4*252)
+data = get_reuters_data("minute")
+# data = get_bbg_data()
+# data = data.tail(4*252)
 capital = 100000
 
 signal = kalman_regression_ZScore_signal(data, "wti", "brent", rolling_window=10, EM_on= False, EM_n_iter=5)
