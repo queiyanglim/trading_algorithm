@@ -17,10 +17,13 @@ plt.style.use("seaborn-whitegrid")
 
 data = get_reuters_data("daily")
 # data = get_bbg_data()
-data = data.tail(10*252)
+data = data.tail(10 * 252)
 capital = 100000
 
-signal = kalman_regression_ZScore_signal(data, "wti", "brent", rolling_window=10, EM_on= False, EM_n_iter=5)
+signal, spread_data = kalman_regression_ZScore_signal(data, "wti", "brent",
+                                                      rolling_window=10,
+                                                      EM_on=False,
+                                                      EM_n_iter=5)
 # df_units = static_unit_allocation(signal, capital)
 df_units = dynamic_unit_allocation(signal, capital)
 
@@ -39,15 +42,31 @@ total_pnl.name = "total_pnl"
 total_pnl.plot()
 plt.show()
 total_pnl = total_pnl.cumsum() + capital
-total_pnl.plot()
+total_pnl.plot(title="Equity Chart")
 plt.show()
 
 # Trade Log
-log = pd.concat([signal, df_units, pnl_x, pnl_y, total_pnl], axis = 1)
+log = pd.concat([signal, df_units, pnl_x, pnl_y, total_pnl], axis=1)
 daily_ret = total_pnl.pct_change()
 sharpe = daily_ret.mean() / daily_ret.std() * np.sqrt(252)
 print("Sharpe:", sharpe)
 # Print trade log
 # log.to_csv("trade_log.csv")
 
-plot_buy_sell_signal_from_log(log, spread_type="hedged_spread")
+"""""""""PLOT DATA"""""""""""
+# Start and end date to observe trade data
+start_date = "2015-01-02"
+end_date = "2018-12-31"
+plot_buy_sell_signal_from_log(log.loc[start_date:end_date, :], spread_type="hedged_spread")
+
+# plot z_score
+spread_mean_std = spread_data[0].loc[start_date:end_date, :]
+spread_mean_std.plot(title="Mean spread and Std Dev")
+plt.show()
+
+signal.loc[start_date:end_date].z_score.plot(title="Z-Score Signal")
+plt.axhline(spread_data[1], color="green")
+plt.axhline(-spread_data[1], color="green")
+plt.axhline(spread_data[2], color="red")
+plt.axhline(-spread_data[2], color="red")
+plt.show()

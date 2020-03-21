@@ -22,6 +22,8 @@ def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM
     entry_zscore, exit_zscore = 1.5, 0.2
     mean_spread = df.hedged_spread.rolling(window=rolling_window).mean()
     std_spread = df.hedged_spread.rolling(window=rolling_window).std()
+    mean_spread.name = "mean_spread"
+    std_spread.name = "std_spread"
     df["z_score"] = (df.hedged_spread - mean_spread) / std_spread
 
     # TODO: Trading Logic
@@ -50,7 +52,7 @@ def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM
     df["num_units_long"] = df["num_units_long"].fillna(method="pad")
     df["num_units_short"] = df["num_units_short"].fillna(method="pad")
     df["long_short_spread"] = df.num_units_short + df.num_units_long
-    return df
+    return df, [pd.concat([mean_spread, std_spread], axis =1), entry_zscore, exit_zscore]
 
 
 def kalman_regression_static_unit_allocation(df_with_signal, initial_capital=100000):
