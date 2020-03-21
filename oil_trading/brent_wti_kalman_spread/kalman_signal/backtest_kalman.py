@@ -5,6 +5,7 @@ from pnl_process.static_position import trade_summary
 from pnl_process.periodic_settlement import periodic_settlement
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from oil_trading.brent_wti_kalman_spread.kalman_signal.plotting_tool import *
 from datetime import datetime
 
 mpl.rcParams['figure.figsize'] = (10, 5)
@@ -14,9 +15,9 @@ mpl.rcParams['grid.linewidth'] = 0.5
 mpl.rcParams['axes.linewidth'] = 0.01
 plt.style.use("seaborn-whitegrid")
 
-data = get_reuters_data("minute")
+data = get_reuters_data("daily")
 # data = get_bbg_data()
-# data = data.tail(4*252)
+data = data.tail(10*252)
 capital = 100000
 
 signal = kalman_regression_ZScore_signal(data, "wti", "brent", rolling_window=10, EM_on= False, EM_n_iter=5)
@@ -45,6 +46,8 @@ plt.show()
 log = pd.concat([signal, df_units, pnl_x, pnl_y, total_pnl], axis = 1)
 daily_ret = total_pnl.pct_change()
 sharpe = daily_ret.mean() / daily_ret.std() * np.sqrt(252)
-
+print("Sharpe:", sharpe)
 # Print trade log
 # log.to_csv("trade_log.csv")
+
+plot_buy_sell_signal_from_log(log)

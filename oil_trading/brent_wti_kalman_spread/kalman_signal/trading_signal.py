@@ -19,7 +19,7 @@ def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM
     df["hedged_spread"] = df.y + df.hr * df.x
 
     # TODO: Z score parameters
-    entry_zscore, exit_zscore = 1.5, 0.5
+    entry_zscore, exit_zscore = 1.5, 0.2
     mean_spread = df.hedged_spread.rolling(window=rolling_window).mean()
     std_spread = df.hedged_spread.rolling(window=rolling_window).std()
     df["z_score"] = (df.hedged_spread - mean_spread) / std_spread
@@ -69,7 +69,6 @@ def kalman_regression_static_unit_allocation(df_with_signal, initial_capital=100
 
     df["x_pos"] = np.nan
     df["y_pos"] = np.nan
-    df = df.iloc[40:]
     df.loc[(df.long_short_spread == 0), ["x_pos", "y_pos"]] = 0
 
     df.loc[df.enter, "y_pos"] = df.long_short_spread * initial_capital / df.y.loc[df.enter]
