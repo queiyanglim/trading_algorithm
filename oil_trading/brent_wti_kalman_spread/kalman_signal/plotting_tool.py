@@ -32,4 +32,3 @@ def plot_buy_sell_signal_from_log(trade_log, spread_type="hedged_spread", _figsi
         if s.buy_sell_close != 0:
             ax.text(s.name, s[signal_plot.name], s.buy_sell_close, fontdict=style_dict.get(s.buy_sell_close))
     plt.show()
-
