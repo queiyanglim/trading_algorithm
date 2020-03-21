@@ -24,8 +24,8 @@ def plot_buy_sell_signal_from_log(trade_log, spread_type="hedged_spread", _figsi
     style_close = dict(size=12, color='gray')
     style_dict = {"buy": style_buy, "sell": style_sell, "close": style_close}
 
-    signal_plot = to_plot["hedged_spread"]
-    ax = signal_plot.plot(figsize=_figsize, legend=True, linewidth=0.75, color="black", title="Kalman's Hedged Spread")
+    signal_plot = to_plot[spread_type]
+    ax = signal_plot.plot(figsize=_figsize, legend=True, linewidth=0.75, color="black", title=spread_type)
 
     for row in to_plot.iterrows():
         s = row[1]

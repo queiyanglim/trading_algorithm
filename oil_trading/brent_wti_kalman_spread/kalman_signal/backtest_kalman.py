@@ -50,4 +50,4 @@ print("Sharpe:", sharpe)
 # Print trade log
 # log.to_csv("trade_log.csv")
 
-plot_buy_sell_signal_from_log(log)
+plot_buy_sell_signal_from_log(log, spread_type="mkt_spread")
