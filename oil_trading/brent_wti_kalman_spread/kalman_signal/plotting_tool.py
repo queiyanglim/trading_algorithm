@@ -8,7 +8,7 @@ def plot_buy_sell_signal_from_log(trade_log, spread_type="hedged_spread", _figsi
     to_plot = trade_log[["x", "y", "hedged_spread", "y_pos"]].copy()
     to_plot = to_plot.loc[:, ~to_plot.columns.duplicated()]
     to_plot["mkt_spread"] = to_plot.y - to_plot.x
-    to_plot["pos_chg"] = np.sign(to_plot.y_pos) != np.sign(to_plot.y_pos.shift(1))
+    to_plot["pos_chg"] = np.sign(to_plot.y_pos) != np.sign(to_plot.y_pos.shift(1).fillna(0))
 
     buy_signal = (to_plot.pos_chg) & (np.sign(to_plot.y_pos) > 0)
     short_signal = (to_plot.pos_chg) & (np.sign(to_plot.y_pos) < 0)
