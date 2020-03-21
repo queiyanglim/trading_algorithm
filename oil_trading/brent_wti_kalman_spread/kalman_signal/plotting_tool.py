@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_buy_sell_signal_from_log(trade_log, spread_type="hedged_spread", _figsize=(20, 10)):
+def plot_buy_sell_signal_from_log(ax, trade_log, spread_type="hedged_spread", _figsize=(20, 10)):
     """ spread_type = "mkt_spread" or "hedged_spread" """
 
     to_plot = trade_log[["x", "y", "hedged_spread", "y_pos"]].copy()
@@ -25,10 +25,10 @@ def plot_buy_sell_signal_from_log(trade_log, spread_type="hedged_spread", _figsi
     style_dict = {"buy": style_buy, "sell": style_sell, "close": style_close}
 
     signal_plot = to_plot[spread_type]
-    ax = signal_plot.plot(figsize=_figsize, legend=True, linewidth=0.75, color="black", title=spread_type)
+    ax = signal_plot.plot(ax = ax, figsize=_figsize, legend=True, linewidth=0.75, color="black", title=spread_type)
 
     for row in to_plot.iterrows():
         s = row[1]
         if s.buy_sell_close != 0:
             ax.text(s.name, s[signal_plot.name], s.buy_sell_close, fontdict=style_dict.get(s.buy_sell_close))
-    plt.show()
+    # plt.show()

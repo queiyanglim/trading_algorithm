@@ -21,6 +21,8 @@ data = data.tail(10 * 252)
 capital = 100000
 
 signal, spread_data = kalman_regression_ZScore_signal(data, "wti", "brent",
+                                                      entry_zscore=1.5,
+                                                      exit_zscore=0.2,
                                                       rolling_window=10,
                                                       EM_on=False,
                                                       EM_n_iter=5)
@@ -39,7 +41,7 @@ total_pnl = pnl_x + pnl_y
 total_pnl.name = "total_pnl"
 
 # Process Strategy Performance and plot performance
-total_pnl.plot()
+total_pnl.plot(title="Realized PnL")
 plt.show()
 total_pnl = total_pnl.cumsum() + capital
 total_pnl.plot(title="Equity Chart")
@@ -55,16 +57,17 @@ print("Sharpe:", sharpe)
 
 """""""""PLOT DATA"""""""""""
 # Start and end date to observe trade data
-start_date = "2015-01-02"
+fig, axes = plt.subplots(nrows=3)
+fig.set_size_inches(20, 10.5)
+
+start_date = "2018-01-02"
 end_date = "2018-12-31"
-plot_buy_sell_signal_from_log(log.loc[start_date:end_date, :], spread_type="hedged_spread")
+plot_buy_sell_signal_from_log(axes[0], log.loc[start_date:end_date, :], spread_type="hedged_spread")
 
 # plot z_score
 spread_mean_std = spread_data[0].loc[start_date:end_date, :]
-spread_mean_std.plot(title="Mean spread and Std Dev")
-plt.show()
-
-signal.loc[start_date:end_date].z_score.plot(title="Z-Score Signal")
+spread_mean_std.plot(ax= axes[1], title="Mean spread and Std Dev")
+signal.loc[start_date:end_date].z_score.plot(ax= axes[2],title="Z-Score Signal")
 plt.axhline(spread_data[1], color="green")
 plt.axhline(-spread_data[1], color="green")
 plt.axhline(spread_data[2], color="red")

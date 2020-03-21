@@ -1,7 +1,7 @@
 from oil_trading.brent_wti_kalman_spread.kalman_signal.kalman_filter import *
 
 
-def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM_on, EM_n_iter):
+def kalman_regression_ZScore_signal(df_input, x_name, y_name, entry_zscore, exit_zscore, rolling_window, EM_on, EM_n_iter):
     """ Take a df with x and y (indexed with timestamp) and
     return a df with ZScore signal.
     *x_name to be called using df[x_name] for its series"""
@@ -19,7 +19,7 @@ def kalman_regression_ZScore_signal(df_input, x_name, y_name, rolling_window, EM
     df["hedged_spread"] = df.y + df.hr * df.x
 
     # TODO: Z score parameters
-    entry_zscore, exit_zscore = 1.5, 0.2
+    # entry_zscore, exit_zscore = 1.5, 0.2
     mean_spread = df.hedged_spread.rolling(window=rolling_window).mean()
     std_spread = df.hedged_spread.rolling(window=rolling_window).std()
     mean_spread.name = "mean_spread"
