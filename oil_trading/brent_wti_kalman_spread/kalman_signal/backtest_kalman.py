@@ -12,12 +12,12 @@ from scipy import stats
 mpl.rcParams['figure.figsize'] = (10, 5)
 plt.style.use("seaborn-whitegrid")
 
-frequency = "daily"
+frequency = "hour"
 data = get_reuters_data(frequency)
 
 # if data is not daily price, filter data in between trading hours
-if frequency != "daily":
-    data = data.between_time("07:00", "18:00")
+# if frequency != "daily":
+#     data = data.between_time("07:00", "18:00")
 
 print("Data Shape", data.shape)
 # data = get_bbg_data()
@@ -50,6 +50,7 @@ log = pd.concat([signal, df_units, total_pnl], axis=1)
 performance = PerformanceStatistics(total_pnl, 0.0125, capital)
 performance.print_result()
 performance.plot_equity_chart()
+performance.plot_normalized_equity_benchmark_chart()
 
 
 # --------------------PLOT DATA------------------------------------------------------------

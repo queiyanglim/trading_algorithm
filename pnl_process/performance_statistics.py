@@ -9,23 +9,23 @@ class PerformanceStatistics:
     """ Pnl vector must refer to a dataframe with daily p&L indexed with timestamps"""
 
     def __init__(self, pnl_vector, risk_free_rate, initial_capital):
-
-        self.pnl_vector = pnl_vector
+        self.pnl_vector = convert_pnl_vector_to_daily(pnl_vector)
         self.initial_capital = initial_capital
         self.equity_value_series = (self.pnl_vector.cumsum() + initial_capital).dropna()
         self.equity_value_series.name = "equity_value"
-        self.daily_equity_value = convert_pnl_vector_to_daily(self.equity_value_series)  # Convert into daily series
+        self.daily_equity_value = self.equity_value_series  # Convert into daily series
         self.daily_benchmark = get_daily_spx().reindex(self.daily_equity_value.index)  # Match same index as pnl series
         self.risk_free_rate = risk_free_rate
         self.annual_performance = annual_performance(self.daily_equity_value)
         self.annual_std_dev = annual_std_dev(self.daily_equity_value)
         self.max_drawdown_percent = max_drawdown_percent(self.daily_equity_value)
         self.max_drawdown_value = max_drawdown_value(self.daily_equity_value)
-        self.compounding_annual_performance = compounding_annual_performance(initial_capital=pnl_vector.iloc[0],
-                                                                             final_capital=pnl_vector.iloc[-1],
-                                                                             num_of_trading_days=len(
-                                                                                 self.daily_equity_value.index)
-                                                                             )
+        self.compounding_annual_performance = compounding_annual_performance(
+            initial_capital=self.equity_value_series.iloc[0],
+            final_capital=self.equity_value_series.iloc[-1],
+            num_of_trading_days=len(
+                self.daily_equity_value.index)
+            )
         self.beta = beta(self.daily_equity_value, self.daily_benchmark)
         self.alpha = alpha(self.daily_equity_value, self.daily_benchmark, self.risk_free_rate)
         self.sharpe_ratio = sharpe_ratio(self.daily_equity_value, self.risk_free_rate)
@@ -50,9 +50,14 @@ class PerformanceStatistics:
             print(r, ": ", res.get(r))
 
     def plot_equity_chart(self):
+        self.daily_equity_value.plot(title=f"Equity Chart")
+        plt.show()
+
+    def plot_normalized_equity_benchmark_chart(self):
         plot_df = pd.concat([self.daily_benchmark, self.daily_equity_value], axis=1)
+        plot_df = plot_df.dropna()
         plot_df = plot_df / plot_df.iloc[0]
-        plot_df.plot()
+        plot_df.plot(title=f"Normalized Equity Value vs Benchmark: {self.daily_benchmark.name}")
         plt.show()
 
 
