@@ -1,7 +1,9 @@
 # Trading Algorithm Research
 
 Update: 29th March 2020
+
 Sharpe: ~4.0
+
 Description: 
 * Hourly Trading
 * Match entry_score and exit_score for z_score signal at 1.28
