@@ -9,7 +9,8 @@ def get_reuters_data(frequency):
 
     path_list = {
         "daily": "https://github.com/queiyanglim/trading_algorithm/blob/master/oil_trading/data/daily.csv?raw=true",
-        "minute": "https://github.com/queiyanglim/trading_algorithm/blob/master/oil_trading/data/minute.csv?raw=true"}
+        "minute": "https://github.com/queiyanglim/trading_algorithm/blob/master/oil_trading/data/minute.csv?raw=true",
+        "hour": "https://github.com/queiyanglim/trading_algorithm/blob/master/oil_trading/data/hour.csv?raw=true"}
 
     df_pull = pd.read_csv(path_list.get(frequency), header=[0, 1], index_col=0)
     df_pull.index = pd.to_datetime(df_pull.index, format="%Y-%m-%d")
