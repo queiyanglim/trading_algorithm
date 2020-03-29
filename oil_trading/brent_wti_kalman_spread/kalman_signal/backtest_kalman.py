@@ -10,6 +10,7 @@ from datetime import datetime
 from scipy import stats
 
 mpl.rcParams['figure.figsize'] = (10, 5)
+mpl.rcParams['lines.linewidth'] = 0.75
 plt.style.use("seaborn-whitegrid")
 
 frequency = "hour"
@@ -61,7 +62,7 @@ fig.set_size_inches(20, 10.5)
 # start_date = "2015-01-02"
 # end_date = "2018-12-31"
 
-start_date = log.index[0]
+start_date = log.index[-300]
 end_date = log.index[-1]
 plot_buy_sell_signal_from_log(axes[0], log.loc[start_date:end_date, :], spread_type="hedged_spread")
 

@@ -32,16 +32,16 @@ class PerformanceStatistics:
         self.treynor_ratio = treynor_ratio(self.daily_equity_value, self.daily_benchmark, self.risk_free_rate)
 
     def result(self):
-        res = {"Annual Performance": self.annual_performance,
-               "Annual Standard Deviation": self.annual_std_dev,
-               "Max Drawdown": self.max_drawdown_percent,
-               "Compounding Annual Performance": self.compounding_annual_performance,
-               "Beta": self.beta,
-               "Alpha": self.alpha,
-               "Sharpe Ratio": self.sharpe_ratio,
-               "Treynor Ratio": self.treynor_ratio
-               }
-
+        res = { "Risk Free Rate": self.risk_free_rate,
+                "Annual Performance": self.annual_performance,
+                "Annual Standard Deviation": self.annual_std_dev,
+                "Max Drawdown": self.max_drawdown_percent,
+                "Compounding Annual Performance": self.compounding_annual_performance,
+                "Beta": self.beta,
+                "Alpha": self.alpha,
+                "Sharpe Ratio": self.sharpe_ratio,
+                "Treynor Ratio": self.treynor_ratio
+                }
         return res
 
     def print_result(self):
