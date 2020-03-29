@@ -1,6 +1,8 @@
 # Research
 Update: 29th March 2020
+
 Sharpe: ~4.0
+
 Description: 
 * Kalman filter Brent WTI spread trading
 * Hourly Trading
