@@ -1,10 +1,8 @@
-# Trading Algorithm Research
-
+# Research
 Update: 29th March 2020
-
 Sharpe: ~4.0
-
 Description: 
+* Kalman filter Brent WTI spread trading
 * Hourly Trading
 * Match entry_score and exit_score for z_score signal at 1.28
 * rolling window = 10
