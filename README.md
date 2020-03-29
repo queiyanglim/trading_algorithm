@@ -18,3 +18,7 @@ Description:
 
 #### Portfolio vs Benchmark (SPX)
 ![Portfolio vs Benchmark](/images/29Mar2020/benchmark_vs_algo.PNG)
+
+#### Maximum drawdown analysis
+Largest drawdown around 18th March. Three consecutive losing trades
+![drawdown peek](/images/29Mar2020/drawdown_peek.PNG)
