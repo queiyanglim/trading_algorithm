@@ -6,9 +6,10 @@ from pykalman import KalmanFilter
 def kalman_filter_regression(x, y, EM_on=False, EM_n_iter=5):
     """" Kalman Filter with choice to run Expectation-Maximization """
     # Transition Covariance
-    delta = 1e-5
-    trans_cov = delta * np.eye(2)
-
+    delta = 1e-6
+    # trans_cov = delta * np.eye(2)
+    trans_cov = np.array([[1e-4, 0.],
+                          [0., 1e-6]])
     # Observation matrix
     obs_mat = np.vstack([x, np.ones(x.shape)]).T[:, np.newaxis]
 
@@ -33,8 +34,8 @@ def kalman_filter_average(x):
                       observation_matrices=[1],
                       initial_state_mean=0,
                       initial_state_covariance=1,
-                      observation_covariance=1,
-                      transition_covariance=.01)
+                      observation_covariance=2,
+                      transition_covariance=1e-5)
 
     state_means, _ = kf.filter(x.values)
     state_means = pd.Series(state_means.flatten(), index=x.index)
