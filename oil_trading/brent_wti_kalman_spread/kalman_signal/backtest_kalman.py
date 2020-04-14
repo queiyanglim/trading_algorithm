@@ -13,7 +13,7 @@ mpl.rcParams['figure.figsize'] = (10, 5)
 mpl.rcParams['lines.linewidth'] = 0.75
 plt.style.use("seaborn-whitegrid")
 
-frequency = "hour"
+frequency = "daily"
 data = get_reuters_data(frequency)
 
 # if data is not daily price, filter data in between trading hours

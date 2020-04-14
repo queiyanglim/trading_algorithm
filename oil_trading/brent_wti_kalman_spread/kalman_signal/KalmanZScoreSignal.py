@@ -37,8 +37,8 @@ class KalmanFilterZScoreSignal:
         self.mean_spread = None
         self.std_spread = None
 
-    # Definte strategy pipeline here
-    def backtest_strategy(self):
+    # Define strategy pipeline here
+    def backtest_z_score_strategy(self):
         self.z_score_signal_fixed_rolling_window()
         self._z_score_trading_logic()
         self.dynamic_unit_allocation()
