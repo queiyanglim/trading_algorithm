@@ -60,7 +60,7 @@ class KalmanOneFactor:
         self.pnl_vector = pnl_x + pnl_y
 
 
-# NO BULLSHIT ONE FACTOR KALMAN FILTER SIMPLE AF MEGALODON BUSTER
+# one factor kalman
 def kalman_filter_one_factor_trained(x_series, y_series, train_period):
     x_train = x_series[:train_period]
     y_train = y_series[:train_period]
